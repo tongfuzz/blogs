@@ -17,7 +17,7 @@ interface Consumer<in T> {
 ```
 
 * 对于使用@Jvmstatic注解声明的字段和方法，可以通过类名称直接调用，
-* Kotlin 的可见性以下列方式映射到 Java：
+* Kotli n 的可见性以下列方式映射到 Java：
 
 >private 成员编译成 private 成员</br>
 private 的顶层声明编译成包级局部声明；</br>
@@ -53,3 +53,18 @@ for(article in data){
 ```
 
 * kotlin 中value和postValue的区别，value在主线程调用，postValue在其他线程调用
+
+* kotlin中的Any相当于Java中的Object
+
+* 定义常量应如下
+
+```java
+companion object {
+        const val VIEW_TYPE_ARTICLE = 1
+        const val VIEW_TYPE_BANNER = 2
+    }
+```
+
+* 定义为MutableLiveData 可以调用set方法为LiveData对象赋值，而定义为LiveData的对象无法调用set方法
+
+* vararg  允许一个参数传入可变数量的参数
