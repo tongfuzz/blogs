@@ -1,0 +1,13 @@
+##Activity的启动过程
+
+Activity启动过程是一个复杂的通过Binder跨进程通信的过程，在Android中，每一个app都是一个进程，包括我们的lanucher桌面程序也是一个进程，在我们点击桌面图标，点开一个app的时候其实就是桌面应用程序launcher与AMS之间的跨进程通信，大致过程如下
+
+>* 1：点击图标，Launcher调用startActivity开始与AMS进行通信，告诉AMS我要启动的是哪个Activity，同时传递3个重要参数给AMS一个是通过ActivityThread的getApplicationThread方法取得的Binder对象，它的类型为ApplicationThread，它代表着Launcher所在的App进程，另一个是mToken，它也是一个Binder对像，它代表了Launcher这个Activity，第三个是我要启动的Activity。
+
+>* 2: AMS会去检查我们启动的App中的manifest文件，看看是否存在我们要启动的Activity，如果没有找到抛异常，如果找到后会通知Launcher执行pause操作,并通知AMS
+
+>* 3: AMS接收到Launcher的消息后，通过创建一个新的进程，并指定ActivityThread的main函数作为入口，此时创建了一个ActivityThread对象，即为UI线程，一个Looper对象作为MainLooper，创建一个Application,在创建完成以后同时将ApplicationThread对像传递给AMS，告诉AMS我应用程序已经创建成功了
+
+>* 4: AMS接受到消息后，将我们一开始保存的Acitity取出来，然后通过ApplicationThread对像告诉新建的APP我要启动这个Activity
+
+>* 5：App调用performLaunchActivity()通过newInstance()方法创建Activity对象，然后通过调用attach方法来创建phonewindow窗口对象，然后调用callActivityOnCreate()方法来调用activity的onCreate()方法，在onCreate方法中我们会调用setContentView()方法来创建DecorView视图对象，然后调用performResumeActivity()方法来调用onResume()方法，同时会创建ViewRootImpl对象，用来管理视图对象，我们的view的绘制，事件的传递等view相关过程都是从ViewRootImpl开始的。

@@ -1,0 +1,2 @@
+##点击事件是如何传递到activity的dispatchTouchEvent中的
+

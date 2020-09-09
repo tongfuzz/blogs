@@ -1,0 +1,11 @@
+### 关于使用navigation + viewpager2时当调用navigate方法跳转到下一页时，再返回上一页时会发生崩溃 Fragment no longer exists for key
+
+使用navigation + viewpager2时当调用navigate方法跳转到下一页时，再返回上一页时会发生崩溃 Fragment no longer exists for key
+
+解决方法为设置viewpager的saveenabled为false，如下:
+
+ ```java
+ viewpager.isSaveEnabled=false
+ ```
+ 
+viewpager内容实用的是recyclerview,在跳转到下一页时会调用onDestoryView，如果isSaveEnabled设置为true的话，viewpager会调用onSaveInstance方法保存当前fragment的id，以及当前viewpager的id和当前tab的位置，但是在viewpager内部的recylerview会回收fragment，在界面返回时会调用onRestoreInstance(),取出保存的fragment的id并且获取通过fragmentmanager获取这个fragment，但是fragment已经被回收，所以会报错找不到fragment，但是如果设置isSaveEnabled为false的话，onSaveInstance并不会调用，也不会保存id，这样在onRestoreInstance也不会通过id去找对应的fragment，也就避免了异常的发生

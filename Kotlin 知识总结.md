@@ -54,7 +54,10 @@ for(article in data){
 
 * kotlin 中value和postValue的区别，value在主线程调用，postValue在其他线程调用
 
-* kotlin中的Any相当于Java中的Object
+* kotlin中的Any相当于Java中的Object，在使用kotlin和java混合的项目中，在java中Map &lt;String,Object &gt;会被编译成java.util.Map&lt;java.lang.String, java.lang.Object &gt;retrofit能正常工作，但是在kotlin中Map &lt;String,Any &gt;会被编译为Map &lt;String,？ &gt;这种情况retrofit无法识别出来，所以会出现如下异常,此时需要为接口声明@JvmSuppressWildcards注解
+```java
+java.lang.IllegalArgumentException: Parameter type must not include a type variable or wildcard: java.util.Map<java.lang.String, ?> (parameter #1)
+```
 
 * 定义常量应如下
 
@@ -68,3 +71,27 @@ companion object {
 * 定义为MutableLiveData 可以调用set方法为LiveData对象赋值，而定义为LiveData的对象无法调用set方法
 
 * vararg  允许一个参数传入可变数量的参数
+
+* 使用kotlin和java写项目时，viewmodel无法关联dagger2自动生成的类，此时添加kapt插件，并将所有的annotationProcessor更改为kapt
+
+* 使用livedata和databinding时需要注意需要设置lifecycleowner 否则xml文件不能通过livedata更新数据
+
+* kotlin中的注释的添加，避免使用@params。@return 等，应该使用[]引用
+
+```java
+// Avoid doing this:
+
+/**
+ * Returns the absolute value of the given number.
+ * @param number The number to return the absolute value for.
+ * @return The absolute value.
+ */
+fun abs(number: Int) = ...
+
+// Do this instead:
+
+/**
+ * Returns the absolute value of the given [number].
+ */
+fun abs(number: Int) = ...
+```

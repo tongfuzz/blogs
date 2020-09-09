@@ -1,0 +1,23 @@
+eventbus
+
+SubscriberMethodFinder： 在我们创建EventBus的时候会创建此对象用来查找订阅方法
+		findUsingReflectionInSingleClass方法，通过反射来寻找当前类中标记了@Suscribe注解的方法
+		然后获取方法参数类型等信息，然后保存到FindState中，然后将找到的方法和方法对应的类放到SubscriberMethodFinder中 的缓存map中，然后回收FindState
+		
+		
+
+FindState：每个类在调用register方法的时候都会根据当前类创建一个此对象，用来保存当前类的订阅方法
+
+SubscriberMethod：用来表示标注了@Suscribe注解的方法，包含方法中的参数类型等信息
+
+在我们调用post方法的时候会将事件放入数组中，然后会开始循环队列，根据事件类型，去找订阅者，然后通过反射调用方法
+
+一般我们会在activity的oncreate方法中调用regisiter方法，这样在Eventbus通过单例模式创建中我们会创建一个thraedlocal常量对象存放的主线层，这就是为什么需要在主线程中初始化，每次我们调用Eventbus对像的post方法，都会获取他内部的threadlocal对象，里面存放的是一个PostingThreadState对像，在他内部维护了一个数组，用来存放事件对象，
+
+创建eventbus的时候也会创建线程池，然后根据标注的threadmode的不同，切换到不同的线程来执行，子线程通过线程池来执行
+
+在创建EventBus时，我们会创建三个发送器，MainThreadPoster BackgroundPoster AsyncPoster;分别用来发送主线程消息，子线程消息，和异步消息
+
+MainThreadPoster:用来发送主线程消息，其本质是一个持有主线程looper的handler对象
+BackgroundPoster:用来发送子线程消息，其本质是一个Runnable对象，用来放在线程池中执行
+AsyncPoster:用来发送异步消息，其本质也是一个Runnable对象对象
